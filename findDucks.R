@@ -1,12 +1,16 @@
 dMagnusonPark <- readRDS("dMagnusonPark.rds")
-# ducksGenusSpecies <- scan("ducksGenusSpecies.txt", wh="", sep="\n")
-# ducks <- read.csv("duckSpecies.csv", stringsAsFactors=FALSE)
-# in.p <- ducks[["GenusSpecies"]] %in% dMagnusonPark$scientific_name
-# ducks[["GenusSpecies"]][in.p]
-# ducks[["CommonName"]][in.p]
+dMontlakeFill <- readRDS("dMontlakeFill.rds")
 #
 duckGenusDF <- read.csv("duckGenus.csv", stringsAsFactors=FALSE)
-indxGenus <- unlist(lapply(duckGenusDF[, "Genus"],
+indxGenusMagnuson <- unlist(lapply(duckGenusDF[, "Genus"],
   function(genus) grep(genus, dMagnusonPark[["scientific_name"]])))
-ducksMagnusonPark <- dMagnusonPark[indxGenus,]
-write.csv(ducksMagnusonPark, "ducksMagnusonPark.csv")
+indxGenusMontlake <- unlist(lapply(duckGenusDF[, "Genus"],
+  function(genus) grep(genus, dMontlakeFill[["scientific_name"]])))
+ducksMagnusonPark <- dMagnusonPark[indxGenusMagnuson,]
+ducksMontlakeFill <- dMontlakeFill[indxGenusMontlake,]
+#
+write.csv(ducksMagnusonPark, "ducksMagnusonPark.csv", row.names=FALSE)
+write.csv(ducksMontlakeFill, "ducksMontlakeFill.csv", row.names=FALSE)
+#
+saveRDS(ducksMagnusonPark, "ducksMagnusonPark.rds")
+saveRDS(ducksMontlakeFill, "ducksMontlakeFill.rds")

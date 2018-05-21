@@ -1,0 +1,34 @@
+---
+title: "Birds in Mangnuson Park and Montlake Fill"
+author: "Stephen Kaluzny"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("lubridate")
+library("dplyr")
+library("ggplot2")
+```
+
+# Introduction
+
+# Data
+From ebird.
+
+Load the data on ducks.
+```{r data_ducks}
+ducksMagnusonPark <- readRDS("ducksMagnusonPark.rds")
+ducksMontlakeFill <- readRDS("ducksMontlakeFill.rds")
+```
+
+# Ducks
+```{r ducks_month}
+ducksMagnusonPark %>%
+	mutate(Month=month(observation_date), Year=year(observation_date)) %>%
+	group_by(Month, Year) %>%
+	mutate(NDucks = n()) %>%
+	ggplot(aes(Month, NDucks, color=as.factor(Year))) + geom_line() +
+      ggtitle("Ducks at Magnuson Park")
+```

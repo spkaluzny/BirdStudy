@@ -17,18 +17,30 @@ library("ggplot2")
 # Data
 From ebird.
 
-Load the data on ducks.
-```{r data_ducks}
-ducksMagnusonPark <- readRDS("ducksMagnusonPark.rds")
-ducksMontlakeFill <- readRDS("ducksMontlakeFill.rds")
+Load the data for observations at Magnuson Park and the Montlake Fill.
+This was extracted from the Washington state data using the ...
+```{r data_MagnusonFill}
+dMagnusonFill <- readRDS("dMagnusonAndFill.rds")
+dim(dMagnusonFill)> dim(dMagnusonFill)
 ```
+
+Find just ducks.
+```{r data_ducks}
+duckGenusDF <- read.csv("duckGenus.csv", stringsAsFactors=FALSE)
+indxGenus <- unlist(lapply(duckGenusDF[, "Genus"],
+  function(genus) grep(genus, dMagnusonFill[["scientific_name"]])))
+ducksMagnusonFill <- dMagnusonFill[indxGenus,]
+saveRDS(ducksMagnusonFill, "ducksMagnusonFill.rds")
+```
+
 
 # Ducks
 ```{r ducks_month}
-ducksMagnusonPark %>%
+ducksMagnusonFill %>%
 	mutate(Month=month(observation_date), Year=year(observation_date)) %>%
-	group_by(Month, Year) %>%
+	group_by(Month, Year, locality_id) %>%
 	mutate(NDucks = n()) %>%
 	ggplot(aes(Month, NDucks, color=as.factor(Year))) + geom_line() +
-      ggtitle("Ducks at Magnuson Park")
+	  facet_grid(locality_id ~ .) +
+      ggtitle("Ducks by Month")
 ```
